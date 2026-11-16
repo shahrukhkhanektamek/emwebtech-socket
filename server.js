@@ -116,11 +116,13 @@ app.post('/api/broadcast', (req, res) => {
 
     try {
         if (room) {
-            // Emit to specific room (e.g. 'vendor_1', 'user_548', 'session_12')
+            // Support single room or array of rooms (Socket.io automatically deduplicates sockets across rooms)
             io.to(room).emit(event, data);
+            console.log(`[Broadcast] Event: "${event}" -> Room: ${JSON.stringify(room)} (Active Sockets: ${io.engine.clientsCount})`);
         } else {
             // Emit globally
             io.emit(event, data);
+            console.log(`[Broadcast] Event: "${event}" -> Global (Active Sockets: ${io.engine.clientsCount})`);
         }
 
         return res.json({
